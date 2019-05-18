@@ -1,0 +1,19 @@
+FUNC void printEffects(Effects e) {
+        int i;
+        FOR i = 0 TO e.getCount() STEP 2 {
+                Effect ef;
+                ef = e.getAt(i);
+                PRINT(ef.getParamValue("value"));
+        }
+}
+
+FUNC void main() {
+    Effects e;
+    Effect ex;
+    ex.setType("Extend");
+    ex.setParam("value", 4);
+
+    e.add(ex);
+
+    printEffects(e);
+}
