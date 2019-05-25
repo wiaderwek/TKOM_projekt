@@ -1,3 +1,4 @@
+import execute.FunctionEx;
 import model.Program;
 import model.data.TextPos;
 import model.data.Token;
@@ -147,9 +148,14 @@ public class ScannerTest {
         System.out.println("Parser test:");
         Scanner scanner = new Scanner("Tests\\scanner_test1.txt");
         Parser parser = new Parser(scanner);
+        SemCheck semCheck = new SemCheck();
         try {
             Program program = parser.parse();
             program.print(0);
+            List<FunctionEx> functionExes = semCheck.checkProgram(program);
+            if(functionExes.size() == 2) {
+                System.out.println("Good");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

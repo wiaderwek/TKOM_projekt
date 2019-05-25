@@ -25,7 +25,8 @@ public class ReturnStatement extends Node {
 
         builder.append("Return value: ");
         System.out.println(builder.toString());
-
-        returnValue.print(tab+4);
+        if(returnValue != null) {
+            returnValue.print(tab+4);
+        }
     }
 }

@@ -102,7 +102,7 @@ public class Parser {
         final Token functionName = accept(TokenType.IDENTIFIER);
         function.setName(functionName.getLexem());
         function.setParameters(parseParameters());
-        function.setStatementBlock(parseStatementBlock());
+        function.setStatementBlock(parseStatementBlock(returnType.getTokenType()));
         return function;
     }
 
@@ -133,7 +133,7 @@ public class Parser {
         return parameters;
     }
 
-    private StatementBlock parseStatementBlock() throws Exception {
+    private StatementBlock parseStatementBlock(TokenType returnType) throws Exception {
         System.out.println("Parsing Statement block...");
         final StatementBlock block = new StatementBlock();
         accept(TokenType.LEFT_BRACE);
@@ -146,13 +146,13 @@ public class Parser {
 
             switch (tmp.getTokenType()) {
                 case IF:
-                    block.addInstruction(parseIfStatement());
+                    block.addInstruction(parseIfStatement(returnType));
                     break;
                 case FOR:
-                    block.addInstruction(parseForStatement());
+                    block.addInstruction(parseForStatement(returnType));
                     break;
                 case RETURN:
-                    block.addInstruction(parseReturnStatement());
+                    block.addInstruction(parseReturnStatement(returnType));
                     break;
                 case IDENTIFIER:
                     block.addInstruction(parseAssignStatementtOrFunnCall());
@@ -184,17 +184,17 @@ public class Parser {
         return block;
     }
 
-    private Node parseIfStatement() throws Exception {
+    private Node parseIfStatement(TokenType returnType) throws Exception {
         System.out.println("Parse if statement...");
         final IfStatement ifStatement = new IfStatement();
         accept(TokenType.IF);
         accept(TokenType.LEFT_PAREN);
         ifStatement.setCondition(parseCondition());
         accept(TokenType.RIGHT_PAREN);
-        ifStatement.setTrueBlock(parseStatementBlock());
+        ifStatement.setTrueBlock(parseStatementBlock(returnType));
         if(checkNextTokens(TokenType.ELSE)) {
             accept(TokenType.ELSE);
-            ifStatement.setElseBlock(parseStatementBlock());
+            ifStatement.setElseBlock(parseStatementBlock(returnType));
         }
 
         return ifStatement;
@@ -271,7 +271,7 @@ public class Parser {
         return primaryCondition;
     }
 
-    private Node parseForStatement() throws Exception {
+    private Node parseForStatement(TokenType returnType) throws Exception {
         System.out.println("Parse for statement...");
         final ForStatement forStatement = new ForStatement();
         accept(TokenType.FOR);
@@ -291,17 +291,21 @@ public class Parser {
             accept(TokenType.STEP);
             forStatement.setStep(parseIntLiteral().getValue());
         }
-        forStatement.setStatementBlock(parseStatementBlock());
+        forStatement.setStatementBlock(parseStatementBlock(returnType));
 
         return forStatement;
 
     }
 
-    private Node parseReturnStatement() throws Exception {
+    private Node parseReturnStatement(TokenType returnType) throws Exception {
         System.out.println("Parse return statement...");
         final ReturnStatement returnStatement = new ReturnStatement();
         accept(TokenType.RETURN);
-        returnStatement.setReturnValue(parseAssignable());
+        if(returnType != TokenType.VOID){
+            returnStatement.setReturnValue(parseAssignable());
+        } else {
+            returnStatement.setReturnValue(null);
+        }
         accept(TokenType.SEMICOLON);
         return returnStatement;
     }
