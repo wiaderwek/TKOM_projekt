@@ -1,5 +1,7 @@
 package execute;
 
+import java.util.Map;
+
 public class IntLiteralEx implements ExpressionOperand, ConditionOperand{
     private int value;
 
@@ -14,5 +16,12 @@ public class IntLiteralEx implements ExpressionOperand, ConditionOperand{
     @Override
     public boolean isTrue() {
         return value > 0;
+    }
+
+    @Override
+    public Value execute(Scope scope, Map<String, FunctionEx> functions) {
+        Value result = new Value();
+        result.setValue(this.value);
+        return result;
     }
 }

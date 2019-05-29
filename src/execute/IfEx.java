@@ -1,5 +1,7 @@
 package execute;
 
+import java.util.Map;
+
 public class IfEx extends Instruction {
     private ConditionEx condition;
     private Block trueBlock;
@@ -27,5 +29,16 @@ public class IfEx extends Instruction {
 
     public void setElseBlock(Block elseBlock) {
         this.elseBlock = elseBlock;
+    }
+
+    @Override
+    public Value execute(Scope scope, Map<String, FunctionEx> functions) {
+        if (condition.execute(scope, functions).isTrue()) {
+            return trueBlock.execute(scope, functions);
+        } else if(elseBlock != null) {
+            return elseBlock.execute(scope, functions);
+        } else {
+            return null;
+        }
     }
 }

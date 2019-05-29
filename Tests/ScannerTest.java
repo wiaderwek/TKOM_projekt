@@ -156,6 +156,8 @@ public class ScannerTest {
             if(functionExes.size() == 2) {
                 System.out.println("Good");
             }
+            Executor executor = new Executor();
+            executor.execute(functionExes);
         } catch (Exception e) {
             e.printStackTrace();
         }

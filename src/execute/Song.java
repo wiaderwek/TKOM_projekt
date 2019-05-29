@@ -40,6 +40,50 @@ public class Song extends Object {
         return getLength();
     }
 
+    public void setTempo(int tempo) {
+        this.tempo = tempo;
+    }
+
+    public void setLength(int length) {
+        this.length = length;
+    }
+
+    public void setSongName(String songName) {
+        this.songName = songName;
+    }
+
+    Song modify(Effects effects) {
+        Song song = new Song();
+        int tmpLength = length;
+        int tmpTempo = tempo;
+        for (Effect effect : effects.getEffects()) {
+            switch (effect.getType()) {
+                case SHORTEN:
+                    tmpLength *= (100 - effect.getParamValue("value"));
+                    tmpLength /= 100;
+                    break;
+                case RISE:
+                    tmpTempo *= (100 + effect.getParamValue("value"));
+                    tmpTempo /= 100;
+                    break;
+                case EXTEND:
+                    tmpLength *= (100 + effect.getParamValue("value"));
+                    tmpLength /= 100;
+                    break;
+                default:
+                    break;
+            }
+        }
+        song.setTempo(tmpTempo);
+        song.setLength(tmpLength);
+        song.setSongName(songName);
+        return song;
+    }
+
+    void save(String fileName) {
+        System.out.println(fileName);
+    }
+
     @Override
     public boolean hasMethod(String name) {
         if(methods.containsKey(name)) {
@@ -86,5 +130,33 @@ public class Song extends Object {
     @Override
     public List<TokenType> getArgumentsType(String name) {
         return methods.get(name).getKey();
+    }
+
+    @Override
+    public Value executeMethod(String name, List<Value> arguments) {
+        Value value = new Value();
+        switch (name) {
+            case "load" :
+                load((String) arguments.get(0).getValue());
+                return null;
+            case "save" :
+                save((String) arguments.get(0).getValue());
+                return null;
+            case "getTempo" :
+                value.setValue(getTempo());
+                value.setCalculated(true);
+                return value;
+            case "getLength" :
+                value.setValue(getLength());
+                value.setCalculated(true);
+                return value;
+            case "modify" :
+                value.setValue(modify((Effects) arguments.get(0).getValue()));
+                value.setCalculated(true);
+                return value;
+            default:
+                break;
+        }
+        return value;
     }
 }

@@ -32,6 +32,10 @@ public class Effects extends execute.Object{
         return effects.get(index);
     }
 
+    public List<Effect> getEffects() {
+        return effects;
+    }
+
     @Override
     public boolean hasMethod(String name) {
         if(methods.containsKey(name)) {
@@ -78,5 +82,26 @@ public class Effects extends execute.Object{
     @Override
     public List<TokenType> getArgumentsType(String name) {
         return methods.get(name).getKey();
+    }
+
+    @Override
+    public Value executeMethod(String name, List<Value> arguments) {
+        Value value = new Value();
+        switch (name) {
+            case "getAt" :
+                value.setValue(getAt((int) arguments.get(0).getValue()));
+                value.setCalculated(true);
+                break;
+            case "getCount" :
+                value.setValue(getCount());
+                value.setCalculated(true);
+                break;
+            case "add" :
+                add((Effect) arguments.get(0).getValue());
+                return null;
+            default:
+                break;
+        }
+        return value;
     }
 }

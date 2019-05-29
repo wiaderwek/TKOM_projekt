@@ -2,6 +2,7 @@ package execute;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class Block extends Instruction {
     protected Scope scope = new Scope();
@@ -15,7 +16,19 @@ public class Block extends Instruction {
         return instructions;
     }
 
-    public void addInstruction(Instruction instruction) {
+    public void addInstruction(final Instruction instruction) {
         instructions.add(instruction);
+    }
+
+    @Override
+    public Value execute(Scope scope, Map<String, FunctionEx> functions) {
+        final Scope newScope = this.scope.getScope(scope);
+        for(final Instruction instruction : instructions) {
+            final Value result = instruction.execute(newScope, functions);
+            if(instruction instanceof Return) {
+                return result;
+            }
+        }
+        return null;
     }
 }

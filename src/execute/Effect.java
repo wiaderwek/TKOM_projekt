@@ -11,7 +11,6 @@ public class Effect extends Object {
     private static Map<String, Pair<List<TokenType>, TokenType>> methods = new HashMap<>();
 
     static {
-        methods.put("add", new Pair<>(new ArrayList<>(), TokenType.STRING));
         methods.put("setType", new Pair<>(Arrays.asList(TokenType.STRING), TokenType.VOID));
         methods.put("setParam", new Pair<>(Arrays.asList(TokenType.STRING, TokenType.INT), TokenType.VOID));
         methods.put("getParamValue", new Pair<>(Arrays.asList(TokenType.STRING), TokenType.INT));
@@ -44,9 +43,14 @@ public class Effect extends Object {
         params.put("value", 0);
     }
 
-    public String getType() {
-        return type.toString();
+    public void setType(String type) {
+        setType(Type.getType(type));
     }
+
+    public Type getType() {
+        return type;
+    }
+
 
     public void setParam(String name, int value) {
         if(params.containsKey(name)) {
@@ -108,6 +112,27 @@ public class Effect extends Object {
     @Override
     public List<TokenType> getArgumentsType(String name) {
         return methods.get(name).getKey();
+    }
+
+    @Override
+    public Value executeMethod(String name, List<Value> arguments) {
+        Value value = new Value();
+        switch (name) {
+            case "setType" :
+                setType((String) arguments.get(0).getValue());
+                return null;
+            case "setParam" :
+                setParam((String) arguments.get(0).getValue(), (int) arguments.get(1).getValue());
+                return null;
+            case "getParamValue" :
+                value.setValue(getParamValue((String) arguments.get(0).getValue()));
+                value.setCalculated(true);
+                break;
+            default:
+                break;
+        }
+
+        return value;
     }
 
 }

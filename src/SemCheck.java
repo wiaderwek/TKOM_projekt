@@ -205,7 +205,9 @@ public class SemCheck {
     }
 
     private void checkStringLiteralInExpression(Scope scope, StringLiteral operand, TokenType operation, ExpressionEx expressionEx, TokenType type) throws Exception {
-        if(type == TokenType.STRING) {
+        if (operation != null && operation != TokenType.PLUS && type == TokenType.STRING) {
+            throw new Exception("Cannot use [" + operation + "] with string type");
+        } else if(type == TokenType.STRING) {
             expressionEx.addOperand(checkStringLiteral(scope, operand));
         } else {
             throw new Exception("Incompatible types! Requierd [" + type + "]");
@@ -218,7 +220,13 @@ public class SemCheck {
         }
         Variable scopeVariable = scope.getVariableByName(operand.getName());
         if(type == scopeVariable.getVarType()) {
-            expressionEx.addOperand(checkVariable(scope, operand, type));
+            if (type == TokenType.STRING && operation != TokenType.PLUS) {
+                throw new Exception("Incompatible operation! Cannot use [" + operation + "]  with " + type);
+            } else if (type != TokenType.INT && operation != null) {
+                throw new Exception("Incompatible operation! Cannot use [" + operation + "]  with " + type);
+            } else {
+                expressionEx.addOperand(checkVariable(scope, operand, type));
+            }
         } else if (type == TokenType.STRING && operation == TokenType.PLUS && scopeVariable.getVarType() == TokenType.INT) {
             expressionEx.addOperand(checkVariable(scope, scopeVariable, type));
         } else {
@@ -364,6 +372,7 @@ public class SemCheck {
         } else {
             throw new Exception("Not an object type: " + calee.getVarType());
         }
+        objCalle.setName(calee.getName());
 
         if(type != null && objCalle.getRetType(methodCall.getName()) != type) {
             throw new Exception("Incompatible types! Requierd [" + type + "]");
@@ -384,6 +393,8 @@ public class SemCheck {
             final TokenType argumentType = objCalle.getArgumentsType(methodCall.getName()).get(i);
             methodCallEx.addArgument(checkAssignable(scope, argument, argumentType));
         }
+
+        scope.setVariable(calee.getName(), new Value(objCalle));
 
         return methodCallEx;
     }
@@ -455,6 +466,26 @@ public class SemCheck {
         expression.addOperand(printStatement.getText());
         print.setText(checkAssignable(scope, expression, TokenType.STRING));
         return print;
+    }
+
+    private boolean isCorrectTypesAndOperation(TokenType requiredType, TokenType operandType, TokenType operation) throws Exception {
+        if(requiredType == operandType) {
+            if (requiredType == TokenType.STRING && operation != null && operation != TokenType.PLUS) {
+                throw new Exception("Incompatible operation! Cannot use [" + operation + "]  with " + requiredType);
+            } else if (requiredType != TokenType.INT && operation != null) {
+                throw new Exception("Incompatible operation! Cannot use [" + operation + "]  with " + requiredType);
+            } else {
+                return true;
+            }
+        } else if (requiredType == TokenType.STRING && operation == TokenType.PLUS && operandType == TokenType.INT) {
+            return true;
+        } else {
+            if( requiredType == TokenType.STRING && operandType == TokenType.INT && operation != null) {
+                throw new Exception("Incompatible operation! Cannot use [" + operation + "] to concatenate int with string");
+            } else {
+                throw new Exception("Incompatible types! Requierd [" + requiredType + "]");
+            }
+        }
     }
 
 
