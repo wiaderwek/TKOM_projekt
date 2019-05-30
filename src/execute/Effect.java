@@ -44,7 +44,11 @@ public class Effect extends Object {
     }
 
     public void setType(String type) {
-        setType(Type.getType(type));
+        if (Type.getType(type) != null) {
+            setType(Type.getType(type));
+        } else {
+            throw new IllegalArgumentException("There is no Effect type [" + type + "]");
+        }
     }
 
     public Type getType() {
