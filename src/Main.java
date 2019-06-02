@@ -1,12 +1,13 @@
+import execute.FunctionEx;
+import model.Program;
+import module.*;
 
+import java.util.List;
 
 public class Main {
 
     public static void main(String[] args) {
-
-        System.out.println("Hello World!");
-        Object string = new String("elo");
-        Object integer = new Integer(1);
-        System.out.println(string.getClass().toString());
+        Interpreter interpreter = new Interpreter();
+        interpreter.exec(new Source("Tests\\kod.txt"));
     }
 }

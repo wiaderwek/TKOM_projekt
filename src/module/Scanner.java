@@ -1,3 +1,5 @@
+package module;
+
 import model.data.TextPos;
 import model.data.Token;
 import model.data.TokenType;
@@ -88,7 +90,7 @@ public class Scanner {
         source.nextLine();
     }
 
-    void nextToken() {
+    public void nextToken() {
         if(skipWhiteSpacesAndComments())
             return;
         char c = source.getCurrentChar();

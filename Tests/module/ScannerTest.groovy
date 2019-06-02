@@ -1,18 +1,102 @@
-import execute.FunctionEx;
-import model.Program;
-import model.data.TextPos;
-import model.data.Token;
-import model.data.TokenType;
+package module
 
-import java.util.ArrayList;
-import java.util.List;
+import model.data.TextPos
+import model.data.Token
+import model.data.TokenType
 
-public class ScannerTest {
-    private static Scanner scanner;
-    private static List<Token> tokenList;
+class ScannerTest extends GroovyTestCase {
+    void testNumber() {
+        String number = "12345";
+        Reader reader = new StringReader(number);
+        Source source = new Source(reader);
+        Scanner scanner = new Scanner(source);
+        scanner.nextToken();
+        Token expected = new Token(TokenType.NUMBER, number, new Integer(12345), new TextPos(0, 0));
 
-    private static boolean scannerTest1() {
-        tokenList = new ArrayList<Token>();
+        assertEquals(expected.getTokenType(), scanner.getActualToken().getTokenType());
+        assertEquals(expected.getLexem(), scanner.getActualToken().getLexem());
+    }
+
+    void testExpressionWithComment() {
+        String expression = "i = 1 + 3 / 2; //comment \n i = 2;"
+        Reader reader = new StringReader(expression)
+        Source source = new Source(reader)
+        Scanner scanner = new Scanner(source)
+        scanner.nextToken()
+
+        assertEquals(TokenType.IDENTIFIER, scanner.getActualToken().getTokenType())
+        scanner.nextToken()
+        assertEquals(TokenType.EQUAL, scanner.getActualToken().getTokenType())
+        scanner.nextToken()
+        assertEquals(TokenType.NUMBER, scanner.getActualToken().getTokenType())
+        scanner.nextToken()
+        assertEquals(TokenType.PLUS, scanner.getActualToken().getTokenType())
+        scanner.nextToken()
+        assertEquals(TokenType.NUMBER, scanner.getActualToken().getTokenType())
+        scanner.nextToken()
+        assertEquals(TokenType.SLASH, scanner.getActualToken().getTokenType())
+        scanner.nextToken()
+        assertEquals(TokenType.NUMBER, scanner.getActualToken().getTokenType())
+        scanner.nextToken()
+        assertEquals(TokenType.SEMICOLON, scanner.getActualToken().getTokenType())
+        scanner.nextToken()
+        assertEquals(TokenType.IDENTIFIER, scanner.getActualToken().getTokenType())
+        scanner.nextToken()
+        assertEquals(TokenType.EQUAL, scanner.getActualToken().getTokenType())
+        scanner.nextToken()
+        assertEquals(TokenType.NUMBER, scanner.getActualToken().getTokenType())
+        scanner.nextToken()
+        assertEquals(TokenType.SEMICOLON, scanner.getActualToken().getTokenType())
+    }
+
+    void testDeclarationAndAssignment() {
+        String declaration = "string s; s = \"test\""
+        Reader reader = new StringReader(declaration)
+        Source source = new Source(reader)
+        Scanner scanner = new Scanner(source)
+        scanner.nextToken()
+
+        assertEquals(TokenType.STRING, scanner.getActualToken().getTokenType())
+        scanner.nextToken()
+        assertEquals(TokenType.IDENTIFIER, scanner.getActualToken().getTokenType())
+        scanner.nextToken()
+        assertEquals(TokenType.SEMICOLON, scanner.getActualToken().getTokenType())
+        scanner.nextToken()
+        assertEquals(TokenType.IDENTIFIER, scanner.getActualToken().getTokenType())
+        scanner.nextToken()
+        assertEquals(TokenType.EQUAL, scanner.getActualToken().getTokenType())
+        scanner.nextToken()
+        assertEquals(TokenType.LETTERING, scanner.getActualToken().getTokenType())
+    }
+
+    void testMethodCall() {
+        String methodCall = "e.setParam(\"value\", 4);"
+        Reader reader = new StringReader(methodCall)
+        Source source = new Source(reader)
+        Scanner scanner = new Scanner(source)
+        scanner.nextToken()
+
+        assertEquals(TokenType.IDENTIFIER, scanner.getActualToken().getTokenType())
+        scanner.nextToken()
+        assertEquals(TokenType.DOT, scanner.getActualToken().getTokenType())
+        scanner.nextToken()
+        assertEquals(TokenType.IDENTIFIER, scanner.getActualToken().getTokenType())
+        scanner.nextToken()
+        assertEquals(TokenType.LEFT_PAREN, scanner.getActualToken().getTokenType())
+        scanner.nextToken()
+        assertEquals(TokenType.LETTERING, scanner.getActualToken().getTokenType())
+        scanner.nextToken()
+        assertEquals(TokenType.COMMA, scanner.getActualToken().getTokenType())
+        scanner.nextToken()
+        assertEquals(TokenType.NUMBER, scanner.getActualToken().getTokenType())
+        scanner.nextToken()
+        assertEquals(TokenType.RIGHT_PAREN, scanner.getActualToken().getTokenType())
+        scanner.nextToken()
+        assertEquals(TokenType.SEMICOLON, scanner.getActualToken().getTokenType())
+    }
+
+    void testProgram() {
+        ArrayList<Token> tokenList = new ArrayList<Token>();
         tokenList.add(new Token(TokenType.FUNC, new String("FUNC"), new TextPos(1,1)));
         tokenList.add(new Token(TokenType.VOID, new String("void"), new TextPos(1,6)));
         tokenList.add(new Token(TokenType.IDENTIFIER, new String("printEffects"), new TextPos(1,11)));
@@ -118,48 +202,12 @@ public class ScannerTest {
 
         tokenList.add(new Token(TokenType.RIGHT_BRACE, new String("}"), new TextPos(19,1)));
 
-        scanner = new Scanner("Tests\\scanner_test1.txt");
-        Token token;
+        Scanner scanner = new Scanner("Tests\\scanner_test1.txt");
         for (Token t : tokenList) {
             scanner.nextToken();
-            token = scanner.getActualToken();
-            if (!token.equal(t)) {
-                System.out.println(token.getLexem() + " " + token.getTokenPos());
-                return false;
-            }
-        }
-        scanner.nextToken();
-        token = scanner.getActualToken();
-        if(token.getTokenType() != TokenType.EOF) {
-            return false;
-        }
-        return true;
-    }
-
-    public static void main(String[] args) {
-
-        String result = new String("FAILED");
-        if(scannerTest1()) {
-            result =  new String("PASSED");
-        }
-
-        System.out.println("ScannerTest1: " + result);
-
-        System.out.println("Parser test:");
-        Scanner scanner = new Scanner("Tests\\scanner_test1.txt");
-        Parser parser = new Parser(scanner);
-        SemCheck semCheck = new SemCheck();
-        try {
-            Program program = parser.parse();
-            program.print(0);
-            List<FunctionEx> functionExes = semCheck.checkProgram(program);
-            if(functionExes.size() == 2) {
-                System.out.println("Good");
-            }
-            Executor executor = new Executor();
-            executor.execute(functionExes);
-        } catch (Exception e) {
-            e.printStackTrace();
+            assertEquals(t.tokenType, scanner.getActualToken().tokenType)
+            assertEquals(t.lexem, scanner.getActualToken().lexem)
+            assertEquals(t.tokenPos, scanner.getActualToken().tokenPos)
         }
     }
 }

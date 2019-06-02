@@ -1,3 +1,5 @@
+package module;
+
 import com.sun.org.apache.xerces.internal.xinclude.MultipleScopeNamespaceSupport;
 import execute.*;
 import model.*;
@@ -137,7 +139,7 @@ public class SemCheck {
         } else if (Node.Type.MethodCall.equals(assignable.getType())) {
             return checkMethodCall(scope, (MethodCall) assignable, type);
         } else if (Node.Type.Expression.equals(assignable.getType())) {
-            return checkExpression(scope, (Expression) assignable, type);
+            return checkExpression(scope, (Expression) assignable, null, type);
         } else if (Node.Type.Variable.equals(assignable.getType())) {
             return checkVariable(scope, (Variable) assignable, type);
         } else {
@@ -145,10 +147,10 @@ public class SemCheck {
         }
     }
 
-    private ExpressionEx checkExpression(final Scope scope, final Expression expression, final TokenType type) throws Exception {
+    private ExpressionEx checkExpression(final Scope scope, final Expression expression, final TokenType op, final TokenType type) throws Exception {
         final ExpressionEx expressionEx = new ExpressionEx();
         expressionEx.setOperations(expression.getOperations());
-        switchForExpression(expression.getOperands().get(0), null, scope, expression, type, expressionEx);
+        switchForExpression(expression.getOperands().get(0), op, scope, expression, type, expressionEx);
         for (int i = 0; i < expression.getOperations().size(); ++i) {
             final Node operand = expression.getOperands().get(i+1);
             final TokenType operation = expression.getOperations().get(i);
@@ -170,7 +172,7 @@ public class SemCheck {
                 break;
 
             case Expression:
-                expressionEx.addOperand(checkExpression(scope, (Expression) operand, type));
+                expressionEx.addOperand(checkExpression(scope, (Expression) operand, operation, type));
                 break;
 
             case Variable:
@@ -252,7 +254,7 @@ public class SemCheck {
     }
 
     private void checkFunCallInExpression(Scope scope, FunCall operand, TokenType operation, ExpressionEx expressionEx, TokenType type) throws Exception {
-        if(definedFunctions.containsKey(operand.getName())) {
+        if(!definedFunctions.containsKey(operand.getName())) {
             throw new Exception("Undefined function: " + operand.getName());
         }
         final Function function = definedFunctions.get(operand.getName()).getFunction();
@@ -499,7 +501,9 @@ public class SemCheck {
 
     private boolean isCorrectTypesAndOperation(TokenType requiredType, TokenType operandType, TokenType operation) throws Exception {
         if(requiredType == operandType) {
-            if (requiredType == TokenType.STRING && operation != null && operation != TokenType.PLUS) {
+            if (requiredType == TokenType.STRING && operation != null && operation == TokenType.PLUS) {
+                return true;
+            }else if (requiredType == TokenType.STRING && operation != null && operation != TokenType.PLUS) {
                 throw new Exception("Incompatible operation! Cannot use [" + operation + "]  with " + requiredType);
             } else if (requiredType != TokenType.INT && operation != null) {
                 throw new Exception("Incompatible operation! Cannot use [" + operation + "]  with " + requiredType);
@@ -512,7 +516,7 @@ public class SemCheck {
             if( requiredType == TokenType.STRING && operandType == TokenType.INT && operation != null) {
                 throw new Exception("Incompatible operation! Cannot use [" + operation + "] to concatenate int with string");
             } else {
-                throw new Exception("Incompatible types! Requierd [" + requiredType + "]");
+                throw new Exception("Incompatible types! Requierd [" + requiredType + "] get [" + operandType + "]");
             }
         }
     }

@@ -3,6 +3,9 @@ package execute;
 import javafx.util.Pair;
 import model.data.TokenType;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
 
 public class Song extends Object {
@@ -81,7 +84,16 @@ public class Song extends Object {
     }
 
     void save(String fileName) {
-        System.out.println(fileName);
+        try {
+            FileWriter fileWriter = new FileWriter("Target\\" + fileName);
+            PrintWriter printWriter = new PrintWriter(fileWriter);
+            printWriter.println("Name: " + songName);
+            printWriter.println("Tempo: " + tempo + "[BPM]");
+            printWriter.println("Length: " + length + "[s]");
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

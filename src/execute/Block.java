@@ -25,7 +25,8 @@ public class Block extends Instruction {
         final Scope newScope = this.scope.getScope(scope);
         for(final Instruction instruction : instructions) {
             final Value result = instruction.execute(newScope, functions);
-            if(instruction instanceof Return) {
+            if(instruction instanceof Return || (result != null && result.isReturn())) {
+                result.setReturn(true);
                 return result;
             }
         }

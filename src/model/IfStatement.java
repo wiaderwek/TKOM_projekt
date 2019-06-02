@@ -54,6 +54,8 @@ public class IfStatement extends Node {
 
         condition.print(tab+4);
         trueBlock.print(tab+4);
-        elseBlock.print(tab+4);
+        if (elseBlock != null) {
+            elseBlock.print(tab+4);
+        }
     }
 }

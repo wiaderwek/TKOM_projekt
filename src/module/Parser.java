@@ -1,3 +1,5 @@
+package module;
+
 import model.*;
 import model.data.Token;
 import model.data.TokenType;
@@ -9,6 +11,8 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 public class Parser {
+
+
     private Scanner scanner;
     private Program program;
     private Token previousToken;

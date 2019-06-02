@@ -1,3 +1,5 @@
+package module;
+
 import model.data.TextPos;
 
 import java.io.*;
@@ -18,6 +20,14 @@ public class Source {
 
         File file = new File(fileName);
         openFile(file);
+    }
+
+    public Source(Reader input) {
+        this.reader = input;
+        currentPos = new TextPos(1, 1);
+        etotal = 0;
+        isAtEnd = false;
+        nextChar();
     }
 
     protected void finalize() throws Throwable {

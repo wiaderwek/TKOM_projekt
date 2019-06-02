@@ -1,3 +1,5 @@
+package module;
+
 import execute.FunctionEx;
 import model.Program;
 
@@ -20,7 +22,7 @@ public class Interpreter {
             e.printStackTrace();
             return;
         }
-
+        program.print(0);
         semCheck = new SemCheck();
         executor = new Executor();
         try {

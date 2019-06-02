@@ -14,6 +14,7 @@ public class Effects extends execute.Object{
         methods.put("add", new Pair<>(Arrays.asList(TokenType.EFFECT), TokenType.VOID));
         methods.put("getCount", new Pair<>(new ArrayList<>(), TokenType.INT));
         methods.put("getAt", new Pair<>(Arrays.asList(TokenType.INT), TokenType.EFFECT));
+        methods.put("delete", new Pair<>(Arrays.asList(TokenType.INT), TokenType.VOID));
     }
 
     public Effects() {
@@ -28,12 +29,24 @@ public class Effects extends execute.Object{
         return effects.size();
     }
 
-    public Effect getAt(int index) {
-        return effects.get(index);
+    public Effect getAt(int index) throws Exception {
+        if(index < effects.size()){
+            return effects.get(index);
+        } else {
+            throw new Exception("Index out of bound: " + index + ", list size: " + effects.size());
+        }
     }
 
     public List<Effect> getEffects() {
         return effects;
+    }
+
+    public void delete(int index) throws Exception {
+        if(index < effects.size()){
+            effects.remove(index);
+        } else {
+            throw new Exception("Index out of bound: " + index + ", list size: " + effects.size());
+        }
     }
 
     @Override
@@ -59,7 +72,11 @@ public class Effects extends execute.Object{
         }
 
         for(int i = 0; i <getCount(); ++i) {
-            if(getAt(i) != effects.getAt(i)) {
+            try {
+                if(getAt(i) != effects.getAt(i)) {
+                    return false;
+                }
+            } catch (Exception e) {
                 return false;
             }
         }
@@ -89,7 +106,11 @@ public class Effects extends execute.Object{
         Value value = new Value();
         switch (name) {
             case "getAt" :
-                value.setValue(getAt((int) arguments.get(0).getValue()));
+                try {
+                    value.setValue(getAt((int) arguments.get(0).getValue()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 value.setCalculated(true);
                 break;
             case "getCount" :
@@ -98,6 +119,13 @@ public class Effects extends execute.Object{
                 break;
             case "add" :
                 add((Effect) arguments.get(0).getValue());
+                return null;
+            case "delete" :
+                try {
+                    delete(((int) arguments.get(0).getValue()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 return null;
             default:
                 break;

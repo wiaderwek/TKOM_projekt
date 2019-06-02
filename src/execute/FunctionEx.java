@@ -34,7 +34,8 @@ public class FunctionEx extends Block {
         Value result;
         for (final Instruction instruction : instructions) {
             result = instruction.execute(this.scope, functions);
-            if (instruction instanceof Return) {
+            if (instruction instanceof Return ||  (result != null && result.isReturn())) {
+                result.setReturn(true);
                 return  result;
             }
         }

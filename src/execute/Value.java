@@ -5,11 +5,12 @@ import model.Expression;
 import java.lang.Object;
 
 public class Value {
+    private boolean isReturn = false;
     private Object value = new Object();
     private boolean isCalculated;
     private Assignable instructionValue = null;
     private boolean isBoolean = false;
-    private boolean isTrue = false;
+//    private boolean isTrue = false;
 
     public Value() {}
 
@@ -18,11 +19,12 @@ public class Value {
     }
 
     public boolean isTrue() {
-        return isTrue;
+        return ((int) value) > 0;
+        //return isTrue;
     }
 
     public void setTrue(boolean aTrue) {
-        isTrue = aTrue;
+        //isTrue = aTrue;
     }
 
     public boolean isBoolean() {
@@ -57,6 +59,14 @@ public class Value {
         this.instructionValue = instructionValue;
     }
 
+    public boolean isReturn() {
+        return isReturn;
+    }
+
+    public void setReturn(boolean aReturn) {
+        isReturn = aReturn;
+    }
+
     public void plus(Value value) {
         if (value.getValue() instanceof Integer && this.value instanceof Integer) {
             this.value = (Integer) ((Integer) this.value) + ((Integer) value.getValue());
@@ -69,7 +79,12 @@ public class Value {
 
     public void minus(Value value) {
         if (value.getValue() instanceof Integer) {
-            this.value = ((Integer) this.value) - ((Integer) value.getValue());
+            this.value =
+                    ((Integer) this.value)
+                    - ((Integer) value.getValue());
+        } else {
+            throw new IllegalArgumentException("Illegal operation! Cannot substract " + value.getValue().getClass() +
+                    " from " + this.value.getClass());
         }
     }
 
@@ -82,6 +97,28 @@ public class Value {
     public void multiply(Value value) {
         if (value.getValue() instanceof Integer) {
             this.value = ((Integer) this.value) * ((Integer) value.getValue());
+        }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(this == obj) {
+            return true;
+        }
+
+        if(!(obj instanceof Value)) {
+            return false;
+        }
+
+        Value value = (Value) obj;
+        if(this.isBoolean != value.isBoolean) {
+            return false;
+//        } else if(this.isTrue != value.isTrue) {
+//            return false;
+        } else if(!this.value.equals(value.getValue())) {
+            return false;
+        } else {
+            return true;
         }
     }
 }

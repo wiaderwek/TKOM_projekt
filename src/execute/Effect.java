@@ -14,12 +14,14 @@ public class Effect extends Object {
         methods.put("setType", new Pair<>(Arrays.asList(TokenType.STRING), TokenType.VOID));
         methods.put("setParam", new Pair<>(Arrays.asList(TokenType.STRING, TokenType.INT), TokenType.VOID));
         methods.put("getParamValue", new Pair<>(Arrays.asList(TokenType.STRING), TokenType.INT));
+        methods.put("getType", new Pair<>(new ArrayList<>(), TokenType.STRING));
     }
 
     public enum Type {
         SHORTEN("Shorten"),
         EXTEND("Extend"),
-        RISE("Rise");
+        RISE("Rise"),
+        UNDEFINED("");
 
         private String typeName;
         private Type(String typeName) {
@@ -37,10 +39,16 @@ public class Effect extends Object {
         }
     }
 
+    public Effect() {
+        type = Type.getType("");
+    }
+
     public void setType(Type type) {
         this.type = type;
         params = new HashMap<>();
-        params.put("value", 0);
+        if(type != Type.UNDEFINED) {
+            params.put("value", 0);
+        }
     }
 
     public void setType(String type) {
@@ -131,6 +139,8 @@ public class Effect extends Object {
             case "getParamValue" :
                 value.setValue(getParamValue((String) arguments.get(0).getValue()));
                 value.setCalculated(true);
+            case "getType" :
+                value.setValue(type.typeName);
                 break;
             default:
                 break;
