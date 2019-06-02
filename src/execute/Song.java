@@ -145,30 +145,36 @@ public class Song extends Object {
     }
 
     @Override
-    public Value executeMethod(String name, List<Value> arguments) {
+    public Value executeMethod(String name, List<Value> arguments, Scope scope, String calee) {
         Value value = new Value();
         switch (name) {
             case "load" :
                 load((String) arguments.get(0).getValue());
-                return null;
+                value = null;
+                break;
             case "save" :
                 save((String) arguments.get(0).getValue());
-                return null;
+                value = null;
+                break;
             case "getTempo" :
                 value.setValue(getTempo());
                 value.setCalculated(true);
-                return value;
+                break;
             case "getLength" :
                 value.setValue(getLength());
                 value.setCalculated(true);
-                return value;
+                break;
             case "modify" :
                 value.setValue(modify((Effects) arguments.get(0).getValue()));
                 value.setCalculated(true);
-                return value;
+                break;
             default:
                 break;
         }
+        Value newObj = new Value();
+        newObj.setValue(this);
+        newObj.setCalculated(true);
+        scope.setVariable(calee, newObj);
         return value;
     }
 }

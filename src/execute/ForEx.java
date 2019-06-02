@@ -47,8 +47,12 @@ public class ForEx extends Instruction {
         int from = (int) scope.getValue(((AssignmentEx) this.from).getName()).getValue();
         int to = (int) this.to.execute(scope, functions).getValue();
         while(from < to) {
-            result = block.execute(scope, functions);
+            Scope newScope = new Scope(scope);
+            result = block.execute(newScope, functions);
             from += step;
+            Value newFrom = new Value(from);
+            newFrom.setCalculated(true);
+            scope.setVariable(((AssignmentEx) this.from).getName(), newFrom);
         }
         return result;
     }

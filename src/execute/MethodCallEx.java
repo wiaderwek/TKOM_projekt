@@ -8,7 +8,8 @@ import java.util.Map;
 
 public class MethodCallEx extends Instruction implements Assignable, ExpressionOperand {
     private String name;
-    private Object calee;
+    //private Object calee;
+    private String caleeName;
     private TokenType caleeType;
     private List<Assignable> arguments =  new LinkedList<>();
 
@@ -20,12 +21,20 @@ public class MethodCallEx extends Instruction implements Assignable, ExpressionO
         this.name = name;
     }
 
-    public Object getCalee() {
-        return calee;
+//    public Object getCalee() {
+//        return calee;
+//    }
+//
+//    public void setCalee(Object calee) {
+//        this.calee = calee;
+//    }
+
+    public String getCalee() {
+        return caleeName;
     }
 
-    public void setCalee(Object calee) {
-        this.calee = calee;
+    public void setCalee(String calee) {
+        this.caleeName = calee;
     }
 
     public TokenType getCaleeType() {
@@ -46,7 +55,7 @@ public class MethodCallEx extends Instruction implements Assignable, ExpressionO
         final List<Value> concreteArguments = new LinkedList<>();
         for (final Assignable argument : arguments) {
             final Value value = new Value();
-            if( argument instanceof VariableEx || isValue(argument)) {
+            if (argument instanceof VariableEx || isValue(argument)) {
                 java.lang.Object obj = argument.execute(scope, functions).getValue();
                 value.setValue(obj);
                 value.setCalculated(true);
@@ -56,16 +65,11 @@ public class MethodCallEx extends Instruction implements Assignable, ExpressionO
             }
             concreteArguments.add(value);
         }
-        if(calee.hasMethod(name)) {
-            System.out.println("[DEBUG] method call: \"" + name + "\" executing...");
-            calee = (Object) scope.getValue(calee.getName()).getValue();
-            Value returnVal = calee.executeMethod(name, concreteArguments);
-            Value newObjVal = new Value(calee);
-            newObjVal.setCalculated(true);
-            scope.setVariable(calee.getName(), newObjVal);
-            return returnVal;
-        }
-        return null;
+
+        System.out.println("[DEBUG] method call: \"" + name + "\" executing...");
+        Object calee = (Object) scope.getValue(caleeName).getValue();
+        Value returnVal = calee.executeMethod(name, concreteArguments, scope, calee.getName());
+        return returnVal;
     }
 
     private boolean isValue(final Assignable assignable) {

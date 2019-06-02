@@ -10,6 +10,14 @@ public class Scope {
     private Map<String, Value> variables = new HashMap<>();
     private List<Variable> varOrder = new ArrayList<>();
 
+    public  Scope() {}
+
+    public Scope(Scope scope) {
+        this.variables = scope.getVariables();
+        this.varOrder = scope.getVarOrder();
+        this.parentScope = scope.parentScope;
+    }
+
     public boolean addVariable(final Variable variable) {
         if(variables.containsKey(variable.getName())) {
             return false;

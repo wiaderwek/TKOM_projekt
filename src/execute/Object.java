@@ -10,7 +10,7 @@ public abstract class Object extends java.lang.Object {
     public abstract TokenType getRetType(String name);
     public abstract TokenType getObjType();
     public abstract List<TokenType> getArgumentsType(String name);
-    public abstract Value executeMethod(String name, List<Value> arguments);
+    public abstract Value executeMethod(String name, List<Value> arguments, Scope scope, String calee);
 
     public String getName() {
         return name;

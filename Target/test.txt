@@ -1,0 +1,3 @@
+Name: Mamamia
+Tempo: 25[BPM]
+Length: 129[s]

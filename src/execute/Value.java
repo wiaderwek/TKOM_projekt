@@ -10,7 +10,6 @@ public class Value {
     private boolean isCalculated;
     private Assignable instructionValue = null;
     private boolean isBoolean = false;
-//    private boolean isTrue = false;
 
     public Value() {}
 
@@ -20,11 +19,6 @@ public class Value {
 
     public boolean isTrue() {
         return ((int) value) > 0;
-        //return isTrue;
-    }
-
-    public void setTrue(boolean aTrue) {
-        //isTrue = aTrue;
     }
 
     public boolean isBoolean() {
@@ -113,8 +107,6 @@ public class Value {
         Value value = (Value) obj;
         if(this.isBoolean != value.isBoolean) {
             return false;
-//        } else if(this.isTrue != value.isTrue) {
-//            return false;
         } else if(!this.value.equals(value.getValue())) {
             return false;
         } else {

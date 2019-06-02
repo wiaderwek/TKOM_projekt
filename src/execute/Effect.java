@@ -127,25 +127,31 @@ public class Effect extends Object {
     }
 
     @Override
-    public Value executeMethod(String name, List<Value> arguments) {
+    public Value executeMethod(String name, List<Value> arguments, Scope scope, String calee) {
         Value value = new Value();
+        Value newObj = new Value();
         switch (name) {
             case "setType" :
                 setType((String) arguments.get(0).getValue());
-                return null;
+                value = null;
+                break;
             case "setParam" :
                 setParam((String) arguments.get(0).getValue(), (int) arguments.get(1).getValue());
-                return null;
+                value = null;
+                break;
             case "getParamValue" :
                 value.setValue(getParamValue((String) arguments.get(0).getValue()));
                 value.setCalculated(true);
+                break;
             case "getType" :
                 value.setValue(type.typeName);
                 break;
             default:
                 break;
         }
-
+        newObj.setValue(this);
+        newObj.setCalculated(true);
+        scope.setVariable(calee, newObj);
         return value;
     }
 

@@ -1,52 +1,36 @@
-FUNC void printEffects(Effects e) {
+FUNC void printEffectsAndDelete(Effects e) {
         int i;
-        FOR i = 0 TO e.getCount() STEP 2 {
+        FOR i = 0 TO e.getCount() STEP 1 {
                 Effect ef;
-                ef = e.getAt(i);
-                int j;
-                j = ef.getParamValue("value");
-                PRINT("value: " + j);
-                e.delete(i);
+                ef = e.getAt(0);
+                string msg;
+                string type;
+                type = ef.getType();
+                int value;
+                value = ef.getParamValue("value");
+                msg = "type: "  + type + ", value: " + value;
+                PRINT(msg);
+                e.delete(0);
         }
 }
 
-FUNC int power(int i) {
-    int sum;
-    sum = 1;
-    IF (i != 0) {
-        int tmp;
-        int tmpi;
-        tmpi = i - 1;
-        tmp = power(tmpi);
-        sum = tmp + sum;
-        RETURN sum;
-    }
-    RETURN sum;
-}
-
 FUNC void main() {
-    Song song;
-    song.load("Mamamia");
-    song.save("test.txt");
-    int i;
-    i = (1 + 2) * 3 - 4;
-    int res;
-    res = power(2);
-    PRINT(res);
+    Effect rise;
+    Effect shorten;
+    Effect extend;
+    rise.setType("Rise");
+    rise.setParam("value", 1);
+    shorten.setType("Shorten");
+    shorten.setParam("value", 2);
+    extend.setType("Extend");
+    extend.setParam("value", 3);
 
-    IF (i > 0)
-    {
-        PRINT(i);
-    }
-    Effects e;
-    Effect ex;
-    Effect er;
-    PRINT(er.getType());
-    ex.setType("Extend");
-    ex.setParam("value", i);
+    Effects ef;
+    ef.add(rise);
+    ef.add(shorten);
+    ef.add(extend);
+    PRINT(ef.getCount());
+    printEffectsAndDelete(ef);
+    PRINT(ef.getCount());
 
-    e.add(ex);
-
-    printEffects(e);
-    PRINT(e.getCount());
 }

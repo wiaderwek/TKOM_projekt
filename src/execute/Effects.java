@@ -102,8 +102,9 @@ public class Effects extends execute.Object{
     }
 
     @Override
-    public Value executeMethod(String name, List<Value> arguments) {
+    public Value executeMethod(String name, List<Value> arguments, Scope scope, String calee) {
         Value value = new Value();
+        Value newObj = new Value();
         switch (name) {
             case "getAt" :
                 try {
@@ -119,17 +120,22 @@ public class Effects extends execute.Object{
                 break;
             case "add" :
                 add((Effect) arguments.get(0).getValue());
-                return null;
+                value = null;
+                break;
             case "delete" :
                 try {
                     delete(((int) arguments.get(0).getValue()));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                return null;
+                value = null;
+                break;
             default:
                 break;
         }
+        newObj.setValue(this);
+        newObj.setCalculated(true);
+        scope.setVariable(calee, newObj);
         return value;
     }
 }

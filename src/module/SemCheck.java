@@ -193,31 +193,12 @@ public class SemCheck {
     }
 
     private void checkIntLiteralInExpression(Scope scope, IntLiteral operand, TokenType operation, ExpressionEx expressionEx, TokenType type) throws Exception {
-//        if(type == TokenType.INT) {
-//            expressionEx.addOperand(checkIntLiteral(scope, operand));
-//        } else if (type == TokenType.STRING && operation == TokenType.PLUS) {
-//            expressionEx.addOperand(checkIntLiteral(scope, operand));
-//        } else {
-//            if( type == TokenType.STRING && operation != null) {
-//                throw new Exception("Incompatible operation! Cannot use [" + operation + "] to concatenate int with string");
-//            } else {
-//                throw new Exception("Incompatible types! Requierd [" + type + "]");
-//            }
-//        }
-
         if(isCorrectTypesAndOperation(type, TokenType.INT, operation)) {
             expressionEx.addOperand(checkIntLiteral(scope, operand));
         }
     }
 
     private void checkStringLiteralInExpression(Scope scope, StringLiteral operand, TokenType operation, ExpressionEx expressionEx, TokenType type) throws Exception {
-//        if (operation != null && operation != TokenType.PLUS && type == TokenType.STRING) {
-//            throw new Exception("Cannot use [" + operation + "] with string type");
-//        } else if(type == TokenType.STRING) {
-//            expressionEx.addOperand(checkStringLiteral(scope, operand));
-//        } else {
-//            throw new Exception("Incompatible types! Requierd [" + type + "]");
-//        }
         if(isCorrectTypesAndOperation(type, TokenType.STRING, operation)) {
             expressionEx.addOperand(checkStringLiteral(scope, operand));
         }
@@ -228,23 +209,6 @@ public class SemCheck {
             throw new Exception("Usage of undefined variable: " + operand.getName());
         }
         Variable scopeVariable = scope.getVariableByName(operand.getName());
-//        if(type == scopeVariable.getVarType()) {
-//            if (type == TokenType.STRING && operation != TokenType.PLUS) {
-//                throw new Exception("Incompatible operation! Cannot use [" + operation + "]  with " + type);
-//            } else if (type != TokenType.INT && operation != null) {
-//                throw new Exception("Incompatible operation! Cannot use [" + operation + "]  with " + type);
-//            } else {
-//                expressionEx.addOperand(checkVariable(scope, operand, type));
-//            }
-//        } else if (type == TokenType.STRING && operation == TokenType.PLUS && scopeVariable.getVarType() == TokenType.INT) {
-//            expressionEx.addOperand(checkVariable(scope, scopeVariable, type));
-//        } else {
-//            if( type == TokenType.STRING && scopeVariable.getVarType() == TokenType.INT && operation != null) {
-//                throw new Exception("Incompatible operation! Cannot use [" + operation + "] to concatenate int with string");
-//            } else {
-//                throw new Exception("Incompatible types! Requierd [" + type + "]");
-//            }
-//        }
 
         if(isIntAddedToString(type, scopeVariable.getVarType(), operation)) {
             expressionEx.addOperand(checkVariable(scope, operand, TokenType.INT));
@@ -258,21 +222,6 @@ public class SemCheck {
             throw new Exception("Undefined function: " + operand.getName());
         }
         final Function function = definedFunctions.get(operand.getName()).getFunction();
-//        if(function.getRetType() != type) {
-//            boolean isIntAddedToString = type == TokenType.STRING && function.getRetType() == TokenType.INT
-//                    && operation == TokenType.PLUS;
-//            if (isIntAddedToString) {
-//                expressionEx.addOperand(checkFunCall(scope, operand, type));
-//                return;
-//            } else {
-//                if(type == TokenType.STRING && function.getRetType() == TokenType.INT && operation != null) {
-//                    throw new Exception("Incompatible operation! Cannot use [" + operation + "] to concatenate int with string");
-//                } else {
-//                    throw new Exception("Incompatible types! Requierd [" + type + "]");
-//                }
-//            }
-//        }
-//        expressionEx.addOperand(checkFunCall(scope, operand, type));
 
         if(isIntAddedToString(type, function.getRetType(), operation)) {
             expressionEx.addOperand(checkFunCall(scope, operand, TokenType.INT));
@@ -303,22 +252,6 @@ public class SemCheck {
         if(!objCalle.hasMethod(operand.getName())) {
             throw new Exception(calee.getVarType().toString() + " does not have method: " + operand.getName());
         }
-
-//        if(objCalle.getRetType(operand.getName()) != type) {
-//            boolean isIntAddedToString = type == TokenType.STRING && objCalle.getRetType(operand.getName()) == TokenType.INT
-//                    && operation == TokenType.PLUS;
-//            if (isIntAddedToString) {
-//                expressionEx.addOperand(checkMethodCall(scope, operand, TokenType.INT));
-//                return;
-//            } else {
-//                if(type == TokenType.STRING && objCalle.getRetType(operand.getName()) == TokenType.INT && operation != null) {
-//                    throw new Exception("Incompatible operation! Cannot use [" + operation + "] to concatenate int with string");
-//                } else {
-//                    throw new Exception("Incompatible types! Requierd [" + type + "]");
-//                }
-//            }
-//        }
-//        expressionEx.addOperand(checkMethodCall(scope, operand, type));
 
         if(isIntAddedToString(type, objCalle.getRetType(operand.getName()), operation)) {
             expressionEx.addOperand(checkMethodCall(scope, operand, TokenType.INT));
@@ -415,7 +348,7 @@ public class SemCheck {
         }
 
         final MethodCallEx methodCallEx = new MethodCallEx();
-        methodCallEx.setCalee(objCalle);
+        methodCallEx.setCalee(methodCall.getCalee());
         methodCallEx.setCaleeType(objCalle.getObjType());
         methodCallEx.setName(methodCall.getName());
 

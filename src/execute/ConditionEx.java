@@ -105,13 +105,8 @@ public class ConditionEx implements ConditionOperand {
                     }
             }
         } else {
-            if (operands.get(0).execute(scope, functions).isTrue()) {
-                result.setValue(operands.get(0).execute(scope, functions).getValue());
-                return result;
-            } else {
-                result.setValue(operands.get(0).execute(scope, functions).getValue());
-                return result;
-            }
+            result.setValue(operands.get(0).execute(scope, functions).getValue());
+            return result;
         }
         return result;
     }
